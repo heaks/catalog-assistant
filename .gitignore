@@ -4,3 +4,4 @@ dist/
 data/raw/
 .idea/
 .DS_Store
+*.tsbuildinfo
