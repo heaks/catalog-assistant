@@ -5,3 +5,4 @@ data/raw/
 .idea/
 .DS_Store
 *.tsbuildinfo
+.cache/
