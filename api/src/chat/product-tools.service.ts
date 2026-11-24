@@ -21,8 +21,9 @@ const SearchInput = z.object({
     .optional()
     .describe(
       'Optional category filter (substring match). Main categories: Clothing, Jewellery, Footwear, ' +
-        'Mobiles & Accessories, Watches, Home Decor & Festive Needs, Automotive, Home Furnishing, ' +
-        'Beauty and Personal Care, Kitchen & Dining, Bags, Wallets & Belts. Can be narrower, e.g. "Women\'s Clothing".',
+      'Mobiles & Accessories, Watches, Home Decor & Festive Needs, Automotive, Home Furnishing, ' +
+      'Beauty and Personal Care, Kitchen & Dining, Bags, Wallets & Belts. Can be narrower, e.g. ' +
+      '"Women\'s Clothing" or "Western Wear". There is no "Dresses" category: put the product type in query instead.',
     ),
 });
 const DetailsInput = z.object({
@@ -36,9 +37,19 @@ const CompareInput = z.object({
     .describe('2 to 4 product ids from search results'),
 });
 
+export interface ProductCard {
+  id: string;
+  name: string;
+  brand: string | null;
+  category: string | null;
+  priceUsd: number | null;
+  imageUrl: string | null;
+}
+
 export interface ToolOutcome {
   content: string;
   isError?: boolean;
+  products?: ProductCard[]; // shown to the user, never sent to Claude
 }
 
 @Injectable()
@@ -107,7 +118,18 @@ export class ProductToolsService {
       priceUsd: h.priceUsdCents === null ? null : h.priceUsdCents / 100,
       similarity: Number(h.similarity.toFixed(3)),
     }));
-    return { content: JSON.stringify({ count: results.length, results }) };
+    const cards: ProductCard[] = hits.map((h) => ({
+      id: h.id,
+      name: h.name,
+      brand: h.brand,
+      category: h.category,
+      priceUsd: h.priceUsdCents === null ? null : h.priceUsdCents / 100,
+      imageUrl: h.imageUrl,
+    }));
+    return {
+      content: JSON.stringify({ count: results.length, results }),
+      products: cards,
+    };
   }
 
   private async getDetails({
