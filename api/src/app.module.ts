@@ -8,6 +8,8 @@ import { HealthController } from './health.controller.js';
 import { EmbeddingsModule } from './embeddings/embeddings.module.js';
 import { IngestModule } from './ingest/ingest.module.js';
 import { SearchModule } from './search/search.module.js';
+import { ChatModule } from './chat/chat.module.js';
+import { ClaudeModule } from './claude/claude.module.js';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { SearchModule } from './search/search.module.js';
     EmbeddingsModule,
     IngestModule,
     SearchModule,
+    ChatModule,
+    ClaudeModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],
