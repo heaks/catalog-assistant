@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { DbModule } from './db/db.module.js';
@@ -29,6 +30,23 @@ import { ClaudeModule } from './claude/claude.module.js';
     SearchModule,
     ChatModule,
     ClaudeModule,
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            name: 'default',
+            ttl: 60_000,
+            limit: Number(config.get('CHAT_LIMIT_PER_MINUTE', 10)),
+          },
+          {
+            name: 'day',
+            ttl: 86_400_000,
+            limit: Number(config.get('CHAT_LIMIT_PER_DAY', 100)),
+          },
+        ],
+      }),
+    }),
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

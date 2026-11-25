@@ -6,7 +6,9 @@ import {
   HttpCode,
   Logger,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { z } from 'zod';
 import {
   AgentService,
@@ -33,6 +35,7 @@ const ChatRequest = z.object({
 });
 
 @Controller('chat')
+@UseGuards(ThrottlerGuard)
 export class ChatController {
   private readonly logger = new Logger(ChatController.name);
 
