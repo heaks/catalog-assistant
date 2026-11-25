@@ -158,7 +158,7 @@ export class AgentService {
 }
 
 // Cards only for products Claude actually recommended, in the order it mentioned them.
-function recommendedCards(answer: string, found: Map<string, ProductCard>): ProductCard[] {
+export function recommendedCards(answer: string, found: Map<string, ProductCard>): ProductCard[] {
   const ids = new Set([...answer.matchAll(/\[product:([A-Za-z0-9]+)\]/g)].map((m) => m[1]));
   return [...ids].map((id) => found.get(id)).filter((p): p is ProductCard => p !== undefined);
 }
